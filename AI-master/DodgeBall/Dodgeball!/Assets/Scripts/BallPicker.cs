@@ -51,6 +51,19 @@ public class BallPicker : MonoBehaviour
         if(currentState == AIStates.wander)
         {
             agent.destination = ball.position;
+            if(ball.parent)
+            {
+                currentState = AIStates.defend;
+            }
+        }
+
+        if(currentState == AIStates.defend)
+        {
+            agent.destination = new Vector3(playerTarget.transform.position.x, 0, 30f);
+            if(!ball.parent)
+            {
+                currentState = AIStates.wander;
+            }
         }
 
 

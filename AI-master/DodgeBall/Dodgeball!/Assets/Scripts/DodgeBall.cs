@@ -22,4 +22,12 @@ public class DodgeBall : MonoBehaviour
     {
         _rb.AddForce(v);
     }
+
+    void OnTriggerExit(Collider c)
+    {
+        if (c.CompareTag("Agent"))
+        {
+            GetComponent<Collider>().isTrigger = false;
+        }
+    }
 }

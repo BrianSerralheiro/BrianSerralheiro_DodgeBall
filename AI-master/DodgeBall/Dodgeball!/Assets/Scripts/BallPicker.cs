@@ -24,24 +24,18 @@ public class BallPicker : MonoBehaviour
     {
         wander, attack, defend
     }
-
-	// Use this for initialization
-	void Start ()
-    {
-		
-	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-		if(currentState == AIStates.attack)
+		if(currentState == AIStates.attack && ball.parent)
         {
             agent.destination = playerTarget.transform.position;
             if((playerTarget.transform.position - transform.position).sqrMagnitude < 80f)
             {
                 ball.GetComponent<Rigidbody>().isKinematic = false;
                 ball.parent = null;
-                ball.GetComponent<DodgeBall>().addForce((playerTarget.transform.position - ball.transform.position) * 5f);
+                ball.GetComponent<DodgeBall>().addForce((playerTarget.transform.position - ball.transform.position) * 100f);
                 throwTimer = 0.5f;
             }
         }
@@ -68,6 +62,7 @@ public class BallPicker : MonoBehaviour
         //pick up ball
         if(c.gameObject.CompareTag("ball") && throwTimer <= 0)
         {
+            c.gameObject.GetComponent<Collider>().isTrigger = true;
             c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
             ball = c.transform;
             ball.parent = transform;

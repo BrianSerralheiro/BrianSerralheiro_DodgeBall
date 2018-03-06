@@ -1,20 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BallPicker : MonoBehaviour
 {
-    [SerializeField]
     private AIAgentController aiAgent;
     [SerializeField]
     private Transform ball;
     [SerializeField]
     private BasicVelocity playerTarget;
-
+    [SerializeField]
     private float throwTimer;
 
     [SerializeField]
     private AIStates currentState;
+
+    //AI Movement
+    [SerializeField]
+    private NavMeshAgent agent;
 
     enum AIStates
     {
@@ -32,13 +36,13 @@ public class BallPicker : MonoBehaviour
     {
 		if(currentState == AIStates.attack)
         {
-            aiAgent.OnDestinationFound(playerTarget.transform.position);
-            if((playerTarget.transform.position - transform.position).sqrMagnitude < 25f)
+            agent.destination = playerTarget.transform.position;
+            if((playerTarget.transform.position - transform.position).sqrMagnitude < 80f)
             {
                 ball.GetComponent<Rigidbody>().isKinematic = false;
-                ball.GetComponent<BallProjectile>().throwBall(playerTarget);
-                throwTimer = 2f;
                 ball.parent = null;
+                ball.GetComponent<DodgeBall>().addForce((playerTarget.transform.position - ball.transform.position) * 5f);
+                throwTimer = 0.5f;
             }
         }
         if(throwTimer > 0)
@@ -49,6 +53,13 @@ public class BallPicker : MonoBehaviour
                 currentState = AIStates.wander;
             }
         }
+
+        if(currentState == AIStates.wander)
+        {
+            agent.destination = ball.position;
+        }
+
+
         
 	}
 

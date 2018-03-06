@@ -92,9 +92,9 @@ public class BallProjectile : MonoBehaviour
         Debug.Log("Time Elapsed: " + m_timeElapsed);
     }
 
-    public void throwBall(Transform t)
+    public void throwBall(BasicVelocity b)
     {
-        m_targetTransform = t;
+        m_movingTarget = b;
         m_rb.velocity = CalculateInitialVelocityMovingTarget();
     }
 }

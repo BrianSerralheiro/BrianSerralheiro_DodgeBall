@@ -9,7 +9,9 @@ public class BallPicker : MonoBehaviour
     [SerializeField]
     private Transform ball;
     [SerializeField]
-    private Transform playerTarget;
+    private BasicVelocity playerTarget;
+
+    private float throwTimer;
 
     [SerializeField]
     private AIStates currentState;
@@ -30,21 +32,30 @@ public class BallPicker : MonoBehaviour
     {
 		if(currentState == AIStates.attack)
         {
-            aiAgent.OnDestinationFound(playerTarget.position);
-            if((playerTarget.position - transform.position).sqrMagnitude < 25f)
+            aiAgent.OnDestinationFound(playerTarget.transform.position);
+            if((playerTarget.transform.position - transform.position).sqrMagnitude < 25f)
             {
                 ball.GetComponent<Rigidbody>().isKinematic = false;
                 ball.GetComponent<BallProjectile>().throwBall(playerTarget);
-                currentState = AIStates.wander;
+                throwTimer = 2f;
                 ball.parent = null;
             }
         }
+        if(throwTimer > 0)
+        {
+            throwTimer -= Time.deltaTime;
+            if(throwTimer <= 0)
+            {
+                currentState = AIStates.wander;
+            }
+        }
+        
 	}
 
     void OnCollisionEnter(Collision c)
     {
         //pick up ball
-        if(c.gameObject.CompareTag("ball"))
+        if(c.gameObject.CompareTag("ball") && throwTimer <= 0)
         {
             c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
             ball = c.transform;

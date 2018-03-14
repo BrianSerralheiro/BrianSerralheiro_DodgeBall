@@ -9,7 +9,7 @@ public class BallPicker : MonoBehaviour
     [SerializeField]
     private Transform ball;
     [SerializeField]
-    private BasicVelocity playerTarget;
+    private Transform[] enemyTeam;
     [SerializeField]
     private float throwTimer;
 
@@ -28,14 +28,15 @@ public class BallPicker : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-		if(currentState == AIStates.attack && ball.parent)
+		if(currentState == AIStates.attack && ball.parent == transform)
         {
-            agent.destination = playerTarget.transform.position;
-            if((playerTarget.transform.position - transform.position).sqrMagnitude < 80f)
+            agent.destination = enemyTeam[Random.Range(0, enemyTeam.Length)].position;
+            if(Mathf.Abs(transform.position.z) < 3)
             {
+                ball.GetComponent<DodgeBall>().throwed = true;
                 ball.GetComponent<Rigidbody>().isKinematic = false;
                 ball.parent = null;
-                ball.GetComponent<DodgeBall>().addForce((playerTarget.transform.position - ball.transform.position) * 100f);
+                ball.GetComponent<DodgeBall>().addForce((agent.destination - ball.transform.position) * 110f);
                 throwTimer = 0.5f;
             }
         }
@@ -59,7 +60,7 @@ public class BallPicker : MonoBehaviour
 
         if(currentState == AIStates.defend)
         {
-            agent.destination = new Vector3(playerTarget.transform.position.x, 0, 30f);
+            agent.destination = new Vector3(0, 0, Mathf.Abs(transform.position.z) / transform.position.z * 30) ;
             if(!ball.parent)
             {
                 currentState = AIStates.wander;
@@ -75,12 +76,20 @@ public class BallPicker : MonoBehaviour
         //pick up ball
         if(c.gameObject.CompareTag("ball") && throwTimer <= 0)
         {
-            c.gameObject.GetComponent<Collider>().isTrigger = true;
-            c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-            ball = c.transform;
-            ball.parent = transform;
-            ball.localPosition = new Vector3(0.5f, 1, 0);
-            currentState = AIStates.attack;
+            if(!c.gameObject.GetComponent<DodgeBall>().throwed)
+            {
+                c.gameObject.GetComponent<Collider>().isTrigger = true;
+                c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                ball = c.transform;
+                ball.parent = transform;
+                ball.localPosition = new Vector3(0.5f, 1, 0);
+                currentState = AIStates.attack;
+            }
+            else
+            {
+                enabled = false;
+                agent.destination = new Vector3(100, 0, 0);
+            }
         }
     }
 }

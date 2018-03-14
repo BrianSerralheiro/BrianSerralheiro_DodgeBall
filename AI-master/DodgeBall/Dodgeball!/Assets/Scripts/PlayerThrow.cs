@@ -20,7 +20,7 @@ public class PlayerThrow : MonoBehaviour
         {
             ball.GetComponent<Rigidbody>().isKinematic = false;
             ball.parent = null;
-            ball.GetComponent<DodgeBall>().addForce(transform.forward * 500f);
+            ball.GetComponent<DodgeBall>().addForce(transform.forward * 1300f);
             throwTimer = 2f;
         }
     }

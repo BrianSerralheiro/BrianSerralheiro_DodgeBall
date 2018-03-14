@@ -36,7 +36,7 @@ public class BallPicker : MonoBehaviour
                 ball.GetComponent<DodgeBall>().throwed = true;
                 ball.GetComponent<Rigidbody>().isKinematic = false;
                 ball.parent = null;
-                ball.GetComponent<DodgeBall>().addForce((agent.destination - ball.transform.position) * 110f);
+                ball.GetComponent<DodgeBall>().addForce((agent.destination - ball.transform.position) * 110f + Vector3.up * 100);
                 throwTimer = 0.5f;
             }
         }
@@ -87,7 +87,7 @@ public class BallPicker : MonoBehaviour
             }
             else
             {
-                enabled = false;
+                gameObject.SetActive(false);
                 agent.destination = new Vector3(100, 0, 0);
             }
         }

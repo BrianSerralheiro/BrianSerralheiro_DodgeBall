@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerThrow : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class PlayerThrow : MonoBehaviour
             ball.GetComponent<DodgeBall>().throwed = true;
             ball.GetComponent<Rigidbody>().isKinematic = false;
             ball.parent = null;
-            ball.GetComponent<DodgeBall>().addForce(transform.forward * 1300f);
+            ball.GetComponent<DodgeBall>().addForce(transform.forward * 1300f + Vector3.up * 100);
             throwTimer = 2f;
         }
     }
@@ -31,11 +32,18 @@ public class PlayerThrow : MonoBehaviour
         //pick up ball
         if (c.gameObject.CompareTag("ball") && throwTimer <= 0)
         {
-            c.gameObject.GetComponent<Collider>().isTrigger = true;
-            c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
-            ball = c.transform;
-            ball.parent = transform;
-            ball.localPosition = new Vector3(0.5f, 1, 0);
+            if (!c.gameObject.GetComponent<DodgeBall>().throwed)
+            {
+                c.gameObject.GetComponent<Collider>().isTrigger = true;
+                c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                ball = c.transform;
+                ball.parent = transform;
+                ball.localPosition = new Vector3(0.5f, 1, 0);
+            }
+            else
+            {
+                SceneManager.LoadScene("WhoWins");
+            }
         }
     }
 

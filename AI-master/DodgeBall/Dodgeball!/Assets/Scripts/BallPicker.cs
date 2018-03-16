@@ -36,7 +36,8 @@ public class BallPicker : MonoBehaviour
                 ball.GetComponent<DodgeBall>().throwed = true;
                 ball.GetComponent<Rigidbody>().isKinematic = false;
                 ball.parent = null;
-                ball.GetComponent<DodgeBall>().addForce((agent.destination - ball.transform.position) * 110f + Vector3.up * 100);
+                //Ball add force based on the distance from to the target(It calculates a vector between the ball and the target and apply as a force). 
+                ball.GetComponent<DodgeBall>().addForce(((agent.destination + Vector3.up * 1.2f) - ball.transform.position) * 110);
                 throwTimer = 0.5f;
             }
         }
@@ -78,6 +79,8 @@ public class BallPicker : MonoBehaviour
         {
             if(!c.gameObject.GetComponent<DodgeBall>().throwed)
             {
+                //Make the AI Agent velocity zero.
+                GetComponent<Rigidbody>().velocity = Vector3.zero;
                 c.gameObject.GetComponent<Collider>().isTrigger = true;
                 c.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                 ball = c.transform;

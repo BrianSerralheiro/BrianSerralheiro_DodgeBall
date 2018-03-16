@@ -18,6 +18,7 @@ public class PlayerThrow : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            ball.GetComponent<DodgeBall>().throwed = true;
             ball.GetComponent<Rigidbody>().isKinematic = false;
             ball.parent = null;
             ball.GetComponent<DodgeBall>().addForce(transform.forward * 1300f);

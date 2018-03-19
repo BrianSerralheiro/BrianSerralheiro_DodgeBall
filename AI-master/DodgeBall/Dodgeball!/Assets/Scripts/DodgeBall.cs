@@ -8,6 +8,8 @@ public class DodgeBall : MonoBehaviour
 
     public bool throwed;
 
+    public bool killed;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -20,9 +22,11 @@ public class DodgeBall : MonoBehaviour
 		if(transform.position.y < -5)
         {
             //Respawning the ball
-            transform.position = new Vector3(Random.Range(-4,4), 2, Random.Range(-4,4));
+            transform.position = new Vector3(Random.Range(-8,8), 2, Random.Range(-8, 8));
             //To reset the ball velocity
             _rb.velocity = Vector3.zero;
+            //To make a random force for the ball when respawning at the world
+            addForce(Random.onUnitSphere * 120);
         }
 	}
 
@@ -36,6 +40,7 @@ public class DodgeBall : MonoBehaviour
         if(c.gameObject.CompareTag("Ground"))
         {
             throwed = false;
+            killed = false;
         }
     }
 

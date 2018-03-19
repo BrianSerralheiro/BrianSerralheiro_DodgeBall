@@ -30,14 +30,22 @@ public class BallPicker : MonoBehaviour
     {
 		if(currentState == AIStates.attack && ball.parent == transform)
         {
+            //For the bot to not attack the disabled enemies.
+            int i = 0;
+            do
+            {
+               i = Random.Range(0, enemyTeam.Length);
+            }
+            while (!enemyTeam[i].gameObject.activeSelf);
             agent.destination = enemyTeam[Random.Range(0, enemyTeam.Length)].position;
             if(Mathf.Abs(transform.position.z) < 3)
             {
                 ball.GetComponent<DodgeBall>().throwed = true;
                 ball.GetComponent<Rigidbody>().isKinematic = false;
                 ball.parent = null;
+                //For the bot to not always hit the target.
                 //Ball add force based on the distance from to the target(It calculates a vector between the ball and the target and apply as a force). 
-                ball.GetComponent<DodgeBall>().addForce(((agent.destination + Vector3.up * 1.2f) - ball.transform.position) * 110);
+                ball.GetComponent<DodgeBall>().addForce(((agent.destination + Vector3.up * 1.2f + Random.onUnitSphere * 1.5f) - ball.transform.position).normalized * 2200);
                 throwTimer = 0.5f;
             }
         }
@@ -77,7 +85,7 @@ public class BallPicker : MonoBehaviour
         //pick up ball
         if(c.gameObject.CompareTag("ball") && throwTimer <= 0)
         {
-            if(!c.gameObject.GetComponent<DodgeBall>().throwed)
+            if(!c.gameObject.GetComponent<DodgeBall>().throwed && !c.gameObject.GetComponent<DodgeBall>().killed)
             {
                 //Make the AI Agent velocity zero.
                 GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -90,6 +98,7 @@ public class BallPicker : MonoBehaviour
             }
             else
             {
+                c.gameObject.GetComponent<DodgeBall>().killed = true;
                 gameObject.SetActive(false);
                 agent.destination = new Vector3(100, 0, 0);
             }
